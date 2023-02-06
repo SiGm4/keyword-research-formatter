@@ -95,8 +95,8 @@ def create_sheet_or_get_sheet_id(spreadsheet_id, tab_name, service):
     try:
         sheet_id = add_new_tab(spreadsheet_id, tab_name, service)
     except HttpError as err:
-        print(err)
-        
+        print(err)   
+
     if sheet_id is None:
         sheet_id = get_sheet_id(spreadsheet_id, tab_name, service)
     

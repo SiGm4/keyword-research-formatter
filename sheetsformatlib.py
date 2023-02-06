@@ -125,8 +125,6 @@ def color_row(spreadsheet_id, sheet_id, service, row_no):
     service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=formatting_body).execute()
 
  
-
-    
 def add_checkboxes_with_color(spreadsheet_id, sheet_id, service, range_object):
     color = {'r': 246, 'g': 178, 'b': 107} #TODO add it to config file
     formatting_body = {
@@ -149,6 +147,77 @@ def add_checkboxes_with_color(spreadsheet_id, sheet_id, service, range_object):
                         }
                     },
                     'fields': 'dataValidation,userEnteredFormat.TextFormat.foregroundColorStyle'
+                }
+            }
+        ]
+    }
+    service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=formatting_body).execute()
+
+def relative_difficulty_conditional_formatting(spreadsheet_id, sheet_id, service, df_length):
+    low_color = {'r': 183, 'g': 225, 'b': 205} #TODO add it to config file
+    medium_color = {'r': 111, 'g': 168, 'b': 220} #TODO add it to config file
+    high_color = {'r': 244, 'g': 199, 'b': 195} #TODO add it to config file
+    conditional_range = {
+        'sheetId': sheet_id,
+        'startRowIndex': 1,
+        'endRowIndex': df_length+1,
+        'startColumnIndex': 4,
+        'endColumnIndex': 5,
+    }
+    formatting_body = {
+        'requests': [
+            {
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': [conditional_range],
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'TEXT_CONTAINS',
+                                'values': [{
+                                    'userEnteredValue': 'Low'
+                                }]
+                            },
+                            'format': {
+                                'backgroundColor': {"red": low_color['r']/255, "green": low_color['g']/255, "blue": low_color['b']/255}
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': [conditional_range],
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'TEXT_CONTAINS',
+                                'values': [{
+                                    'userEnteredValue': 'Medium'
+                                }]
+                            },
+                            'format': {
+                                'backgroundColor': {"red": medium_color['r']/255, "green": medium_color['g']/255, "blue": medium_color['b']/255}
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': [conditional_range],
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'TEXT_CONTAINS',
+                                'values': [{
+                                    'userEnteredValue': 'High'
+                                }]
+                            },
+                            'format': {
+                                'backgroundColor': {"red": high_color['r']/255, "green": high_color['g']/255, "blue": high_color['b']/255}
+                            }
+                        }
+                    }
                 }
             }
         ]
